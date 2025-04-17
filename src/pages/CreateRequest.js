@@ -64,7 +64,7 @@ const CreateRequest = () => {
 
         try {
           const uploadRes = await axios.post(
-            '${process.env.REACT_APP_BACKEND_URL}/api/upload',
+            `${process.env.REACT_APP_BACKEND_URL}/api/upload`,
             uploadFormData,
             {
               headers: {
@@ -120,7 +120,7 @@ const CreateRequest = () => {
       }
 
       await axios.post(
-        '${process.env.REACT_APP_BACKEND_URL}/api/requests',
+        `${process.env.REACT_APP_BACKEND_URL}/api/requests`,
         requestData,
         {
           headers: {

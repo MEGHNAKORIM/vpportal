@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import {
@@ -19,7 +19,6 @@ import {
   DialogContent,
   DialogActions,
   TextField,
-  Alert,
   CircularProgress,
   Grid,
   FormControl,
@@ -42,9 +41,8 @@ import {
 
 const AdminDashboard = () => {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
   const [remarks, setRemarks] = useState('');
-  const [response, setResponse] = useState('');
+  const [response, setResponse] = useState(''); // Only declare once
   const [actionMessage, setActionMessage] = useState('');
   const [isActionLoading, setIsActionLoading] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
@@ -83,18 +81,60 @@ const AdminDashboard = () => {
       requestsByDate[date][request.status]++;
     });
     return Object.values(requestsByDate).sort((a, b) => new Date(a.date) - new Date(b.date));
-  }, [requests, timeFilter]);
+  }, [requests]);
+  const fetchRequests = React.useCallback(async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        navigate('/login');
+        return;
+      }
 
+      // Set default headers for all axios requests
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/requests/all`);
+      
+      if (response.data.success) {
+        setRequests(response.data.data);
+
+        // Update request counts
+        const counts = response.data.data.reduce((acc, request) => {
+          acc[request.status] = (acc[request.status] || 0) + 1;
+          return acc;
+        }, {});
+
+        setStats({
+          total: response.data.data.length,
+          approved: counts.approved || 0,
+          rejected: counts.rejected || 0,
+          pending: counts.pending || 0
+        });
+      } else {
+        throw new Error('Failed to fetch requests');
+      }
+    } catch (error) {
+      console.error('Error fetching requests:', error);
+      if (error.response?.status === 401 || error.response?.status === 403) {
+        // If unauthorized, redirect to login
+        navigate('/login');
+        return;
+      }
+      // Handle other errors
+      setActionMessage('Error: Failed to fetch requests. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  }, [navigate]);
   useEffect(() => {
     fetchRequests();
     const interval = setInterval(fetchRequests, 5000); // Poll every 5 seconds
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchRequests]);
 
   useEffect(() => {
     // Process data for charts when requests change
     const processChartData = () => {
-      const now = new Date();
       let filteredRequests = [...requests];
 
       // Apply time filter
@@ -142,60 +182,14 @@ const AdminDashboard = () => {
         requestsByDate[date][request.status]++;
       });
 
-      // Convert to chart format
-      const chartData = Object.values(requestsByDate)
-        .sort((a, b) => new Date(a.date) - new Date(b.date));
-
+      
       setStats(newStats);
     };
 
     processChartData();
   }, [requests, timeFilter]);
 
-  const fetchRequests = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        navigate('/login');
-        return;
-      }
-
-      // Set default headers for all axios requests
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-
-      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/requests/all`);
-      
-      if (response.data.success) {
-        setRequests(response.data.data);
-
-        // Update request counts
-        const counts = response.data.data.reduce((acc, request) => {
-          acc[request.status] = (acc[request.status] || 0) + 1;
-          return acc;
-        }, {});
-
-        setStats({
-          total: response.data.data.length,
-          approved: counts.approved || 0,
-          rejected: counts.rejected || 0,
-          pending: counts.pending || 0
-        });
-      } else {
-        throw new Error('Failed to fetch requests');
-      }
-    } catch (error) {
-      console.error('Error fetching requests:', error);
-      if (error.response?.status === 401 || error.response?.status === 403) {
-        // If unauthorized, redirect to login
-        navigate('/login');
-        return;
-      }
-      // Handle other errors
-      setActionMessage('Error: Failed to fetch requests. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  
 
   const handleRequestAction = async (request, status) => {
     if (!remarks.trim()) {

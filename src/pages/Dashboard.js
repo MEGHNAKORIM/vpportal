@@ -3,7 +3,6 @@ import axios from 'axios';
 import {
   Container,
   Typography,
-  Button,
   Table,
   TableBody,
   TableCell,
@@ -11,23 +10,17 @@ import {
   TableHead,
   TableRow,
   Paper,
-  CircularProgress,
-  Alert,
-  IconButton,
-  Tooltip,
   Box,
   Chip
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import LogoutIcon from '@mui/icons-material/Logout';
-import EditIcon from '@mui/icons-material/Edit'; // Used below
 import RequestForm from '../components/RequestForm';
 
 const Dashboard = () => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
-
+  console.log(user)
   const [showForm, setShowForm] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [error, setError] = useState('');
@@ -39,12 +32,6 @@ const Dashboard = () => {
     setShowForm(false);
     setSelectedRequest(null);
   };
-
-  const handleEdit = (request) => {
-    setSelectedRequest(request);
-    setShowForm(true);
-  };
-
   const handleSubmit = async (formData) => {
     setLoading(true);
     setError('');
@@ -64,7 +51,7 @@ const Dashboard = () => {
       } else {
         // Create new request
         response = await axios.post(
-          '${process.env.REACT_APP_BACKEND_URL}/api/requests',
+          `${process.env.REACT_APP_BACKEND_URL}/api/requests`,
           formData,
           { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
         );
@@ -82,7 +69,7 @@ const Dashboard = () => {
   const fetchUserProfile = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('${process.env.REACT_APP_BACKEND_URL}/api/users/me', {
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/users/me`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setUser(response.data);
@@ -97,7 +84,7 @@ const Dashboard = () => {
   const fetchRequests = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('${process.env.REACT_APP_BACKEND_URL}/api/requests/me', {
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/requests/me`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setRequests(response.data.data);

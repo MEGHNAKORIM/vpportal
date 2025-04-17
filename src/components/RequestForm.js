@@ -1,16 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Typography, List, ListItem, ListItemText, IconButton, Alert } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Typography, List, ListItem, ListItemText, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-const schools = [
-  'School of Technology',
-  'School of Sciences',
-  'School of Architecture and Planning',
-  'School of Business',
-  'School of Arts and Design',
-  'School of Liberal Arts and Humanities',
-  'School of Law'
-];
+
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_FILE_TYPES = '.pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png';
