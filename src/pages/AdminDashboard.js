@@ -263,19 +263,6 @@ const AdminDashboard = () => {
     }
   };
 
-        request._id === requestId
-          ? { ...request, status: newStatus, remarks: remarks }
-          : request
-      ));
-
-      // Reset remarks
-      setRemarks('');
-      setSelectedRequest(null);
-    } catch (error) {
-      console.error('Error updating status:', error);
-    }
-  };
-
   const getStatusColor = (status) => {
     switch (status) {
       case 'approved':
