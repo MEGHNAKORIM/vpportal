@@ -1,18 +1,5 @@
-import React, { useState } from 'react';
-import {
-  Box,
-  Paper,
-  Typography,
-  Avatar,
-  Button,
-  Menu,
-  MenuItem,
-  Divider,
-  List,
-  ListItem,
-  ListItemText,
-  IconButton
-} from '@mui/material';
+import React from 'react';
+import { Typography, Avatar, Box, Button, List, ListItem, ListItemText, IconButton } from '@mui/material';
 import { AccountCircle, Email, Phone, School } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';

@@ -1,22 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  Button,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Typography,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemSecondary,
-  IconButton
-} from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 const schools = [

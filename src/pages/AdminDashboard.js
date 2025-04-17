@@ -19,14 +19,8 @@ import {
   DialogContent,
   DialogActions,
   TextField,
-  Grid,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
   Alert,
-   CircularProgress
-
+  CircularProgress
 } from '@mui/material';
 import {
   BarChart,
@@ -39,11 +33,9 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
+
 
 const AdminDashboard = () => {
-  const [user, setUser] = useState(null);
-  const [anchorEl, setAnchorEl] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [remarks, setRemarks] = useState('');
@@ -53,12 +45,8 @@ const AdminDashboard = () => {
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [requests, setRequests] = useState([]);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
-  const [nameFilter, setNameFilter] = useState('');
   const [requestIdFilter, setRequestIdFilter] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
-  const [chartData, setChartData] = useState([]);
-  const [requestTypes, setRequestTypes] = useState([]);
   const [timeFilter, setTimeFilter] = useState('all');
   const [stats, setStats] = useState({
     total: 0,
@@ -132,8 +120,7 @@ const AdminDashboard = () => {
       const chartData = Object.values(requestsByDate)
         .sort((a, b) => new Date(a.date) - new Date(b.date));
 
-      setChartData(chartData);
-      setRequestTypes(Array.from(new Set(filteredRequests.map(r => r.subject))));
+      setStats(newStats);
     };
 
     processChartData();
@@ -234,7 +221,7 @@ const AdminDashboard = () => {
         setActionMessage(`Request ${status} successfully. Email notification has been sent.`);
         
         // Close the dialog
-        setDetailsDialogOpen(false);
+        setDialogOpen(false);
         
         // Refresh the requests list
         fetchRequests();
@@ -262,36 +249,6 @@ const AdminDashboard = () => {
     }
   };
 
-  // Function to render remarks history
-  const renderRemarksHistory = (request) => {
-    if (!request.remarksHistory || request.remarksHistory.length === 0) {
-      return <p>No previous remarks</p>;
-    }
-
-    return (
-      <div className="remarks-history">
-        <h5>Remarks History</h5>
-        <div className="remarks-list" style={{ maxHeight: '200px', overflowY: 'auto' }}>
-          {request.remarksHistory.map((remark, index) => (
-            <div key={index} className="remark-item" style={{ 
-              padding: '10px', 
-              margin: '5px 0', 
-              backgroundColor: '#f8f9fa',
-              borderRadius: '4px',
-              borderLeft: '3px solid #28a745'
-            }}>
-              <div style={{ fontSize: '0.9rem', color: '#666' }}>
-                <strong>{remark.createdBy?.name || 'Admin'}</strong> • 
-                {new Date(remark.createdAt).toLocaleString()}
-              </div>
-              <div style={{ marginTop: '5px' }}>{remark.remark}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
   const handleSubmitResponse = async (request, status) => {
     try {
       await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/requests/${request._id}`, {
@@ -306,20 +263,6 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleStatusUpdate = async (requestId, newStatus) => {
-    try {
-      const token = localStorage.getItem('token');
-      await axios.put(
-        `${process.env.REACT_APP_BACKEND_URL}/api/requests/${requestId}/status`,
-        {
-          status: newStatus,
-          remarks: remarks
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      // Update local state
-      setRequests(requests.map(request =>
         request._id === requestId
           ? { ...request, status: newStatus, remarks: remarks }
           : request
@@ -645,20 +588,20 @@ const AdminDashboard = () => {
                       </Typography>
                       {attachment.filePath.toLowerCase().endsWith('.pdf') ? (
                         <iframe
-                          src={`http://localhost:5000${attachment.filePath}`}
+                          src={`${process.env.REACT_APP_BACKEND_URL}${attachment.filePath}`}
                           width="100%"
                           height="500px"
                           title="PDF Preview"
                         />
                       ) : attachment.fileType.startsWith('image/') ? (
                         <img
-                          src={`http://localhost:5000${attachment.filePath}`}
+                          src={`${process.env.REACT_APP_BACKEND_URL}${attachment.filePath}`}
                           alt={attachment.fileName}
                           style={{ maxWidth: '100%', maxHeight: '500px' }}
                         />
                       ) : (
                         <Button
-                          href={`http://localhost:5000${attachment.filePath}`}
+                          href={`${process.env.REACT_APP_BACKEND_URL}${attachment.filePath}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           variant="outlined"

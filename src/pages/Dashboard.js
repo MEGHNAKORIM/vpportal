@@ -2,54 +2,35 @@ import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import {
   Container,
-  Paper,
   Typography,
+  Button,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  Chip,
-  Box,
-  Button,
-  Grid,
-  Avatar,
-  IconButton,
-  Menu,
-  MenuItem,
+  Paper,
   CircularProgress,
   Alert,
+  IconButton,
   Tooltip
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
-import EditIcon from '@mui/icons-material/Edit';
+import EditIcon from '@mui/icons-material/Edit'; // Used below
 import RequestForm from '../components/RequestForm';
 
 const Dashboard = () => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState(null);
-  const [anchorEl, setAnchorEl] = useState(null);
+
   const [showForm, setShowForm] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleMenuClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
 
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    navigate('/login');
-  };
 
   const handleClose = () => {
     setShowForm(false);
@@ -70,7 +51,7 @@ const Dashboard = () => {
       if (selectedRequest) {
         // Update existing request
         response = await axios.put(
-          `http://localhost:5000/api/requests/${selectedRequest._id}`,
+          `${process.env.REACT_APP_BACKEND_URL}/api/requests/${selectedRequest._id}`,
           formData,
           { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
         );
@@ -80,7 +61,7 @@ const Dashboard = () => {
       } else {
         // Create new request
         response = await axios.post(
-          'http://localhost:5000/api/requests',
+          '${process.env.REACT_APP_BACKEND_URL}/api/requests',
           formData,
           { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
         );
@@ -98,7 +79,7 @@ const Dashboard = () => {
   const fetchUserProfile = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:5000/api/users/me', {
+      const response = await axios.get('${process.env.REACT_APP_BACKEND_URL}/api/users/me', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setUser(response.data);
@@ -113,7 +94,7 @@ const Dashboard = () => {
   const fetchRequests = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:5000/api/requests/me', {
+      const response = await axios.get('${process.env.REACT_APP_BACKEND_URL}/api/requests/me', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setRequests(response.data.data);

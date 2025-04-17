@@ -9,7 +9,6 @@ import {
   Button,
   Box,
   Alert,
-  MenuItem,
   CircularProgress
 } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
@@ -86,7 +85,7 @@ const Register = () => {
 
     try {
       const response = await axios.post(
-        'http://localhost:5000/api/auth/verify-email',
+        '${process.env.REACT_APP_BACKEND_URL}/api/auth/verify-email',
         verificationData,
         { headers: { 'Content-Type': 'application/json' } }
       );
@@ -152,7 +151,7 @@ const Register = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/register', formData);
+      const response = await axios.post('${process.env.REACT_APP_BACKEND_URL}/api/auth/register', formData);
       console.log('Registration response:', response.data);
 
       if (response.data.success) {
