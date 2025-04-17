@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import {
@@ -20,7 +20,12 @@ import {
   DialogActions,
   TextField,
   Alert,
-  CircularProgress
+  CircularProgress,
+  Grid,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem
 } from '@mui/material';
 import {
   BarChart,
@@ -48,6 +53,8 @@ const AdminDashboard = () => {
   const [requestIdFilter, setRequestIdFilter] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
   const [timeFilter, setTimeFilter] = useState('all');
+  const [nameFilter, setNameFilter] = useState('');
+  const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
   const [stats, setStats] = useState({
     total: 0,
     approved: 0,
@@ -58,6 +65,25 @@ const AdminDashboard = () => {
   const requestsPerPage = 10;
 
   const navigate = useNavigate();
+
+  // Compute chartData for the chart
+  const chartData = React.useMemo(() => {
+    const filteredRequests = [...requests];
+    const requestsByDate = {};
+    filteredRequests.forEach(request => {
+      const date = new Date(request.createdAt).toLocaleDateString();
+      requestsByDate[date] = requestsByDate[date] || {
+        date,
+        total: 0,
+        approved: 0,
+        rejected: 0,
+        pending: 0
+      };
+      requestsByDate[date].total++;
+      requestsByDate[date][request.status]++;
+    });
+    return Object.values(requestsByDate).sort((a, b) => new Date(a.date) - new Date(b.date));
+  }, [requests, timeFilter]);
 
   useEffect(() => {
     fetchRequests();
