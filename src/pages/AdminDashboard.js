@@ -42,7 +42,7 @@ import {
 const AdminDashboard = () => {
   const [loading, setLoading] = useState(false);
   const [remarks, setRemarks] = useState('');
-  const [response, setResponse] = useState(''); // Only declare once
+  const [response, setResponse] = useState('');
   const [actionMessage, setActionMessage] = useState('');
   const [isActionLoading, setIsActionLoading] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
@@ -82,7 +82,7 @@ const AdminDashboard = () => {
     });
     return Object.values(requestsByDate).sort((a, b) => new Date(a.date) - new Date(b.date));
   }, [requests]);
-  const fetchRequests = React.useCallback(async () => {
+  const fetchRequests = async () => {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -125,12 +125,12 @@ const AdminDashboard = () => {
     } finally {
       setLoading(false);
     }
-  }, [navigate]);
+  };
   useEffect(() => {
     fetchRequests();
     const interval = setInterval(fetchRequests, 5000); // Poll every 5 seconds
     return () => clearInterval(interval);
-  }, [fetchRequests]);
+  },[fetchRequests]);
 
   useEffect(() => {
     // Process data for charts when requests change

@@ -226,6 +226,7 @@ const Register = () => {
               >
                 <MenuItem value="student">Student</MenuItem>
                 <MenuItem value="faculty">Faculty</MenuItem>
+                <MenuItem value="staff">Staff</MenuItem>
               </TextField>
               <TextField
                 fullWidth
@@ -238,6 +239,7 @@ const Register = () => {
                 required
               >
                 <MenuItem value="School of Business">School of Business</MenuItem>
+                <MenuItem value="School of Sciences">School of Sciences</MenuItem>
                 <MenuItem value="School of Technology">School of Technology</MenuItem>
                 <MenuItem value="School of Arts and Design">School of Arts and Design</MenuItem>
                 <MenuItem value="School of Architecture">School of Architecture</MenuItem>
