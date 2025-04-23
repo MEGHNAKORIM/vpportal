@@ -5,6 +5,9 @@
 
 # testing
 /coverage
+# Ignore environment files
+.env
+config/config.env
 
 # production
 /build

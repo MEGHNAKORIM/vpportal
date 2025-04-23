@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
 const AuthContext = createContext();
+console.log('ENV BACKEND:', process.env.REACT_APP_BACKEND_URL);
 
 export const useAuth = () => useContext(AuthContext);
 
@@ -31,7 +32,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const login = async (email, password) => {
-    const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/auth/login`, {
+    const res = await axios.post(`http://localhost:5000/api/auth/login`, {
       email,
       password,
     });
@@ -43,7 +44,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const register = async (userData) => {
-    const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/auth/register`, userData);
+    const res = await axios.post(`http://localhost:5000/api/auth/register`, userData);
     const { token, user } = res.data;
     localStorage.setItem('token', token);
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
